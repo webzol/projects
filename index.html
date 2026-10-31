@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>webzol · 项目展示页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0b; --bg-2:#111113; --bg-3:#161619;
+    --border:#232329; --border-2:#2e2e35;
+    --text:#ededf0; --text-2:#a1a1aa; --text-3:#62626b;
+    --accent:#6cb0ff; --invert-bg:#ededf0; --invert-fg:#0a0a0b;
+    --shadow:0 8px 24px rgba(0,0,0,.4);
+  }
+  html[data-theme="light"]{
+    --bg:#ffffff; --bg-2:#fafafa; --bg-3:#f4f4f5;
+    --border:#e4e4e7; --border-2:#d4d4d8;
+    --text:#18181b; --text-2:#52525b; --text-3:#a1a1aa;
+    --accent:#0969da; --invert-bg:#18181b; --invert-fg:#ffffff;
+    --shadow:0 4px 16px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  a{color:inherit;text-decoration:none}
+  button{user-select:none;font-family:inherit}
+  input{caret-color:var(--text);font-family:inherit}
+  :focus:not(:focus-visible){outline:none}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+  html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--border-2) transparent}
+  body{
+    background:var(--bg); color:var(--text); min-height:100vh;
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(108,176,255,.3)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:99px;border:3px solid var(--bg)}
+
+  .wrap{max-width:1160px;margin:0 auto;padding:56px 24px 80px}
+
+  /* ===== hero ===== */
+  .hero{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .avatar{width:64px;height:64px;border-radius:50%;border:1px solid var(--border)}
+  .who{flex:1;min-width:240px}
+  .who h1{font-size:21px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .who h1 a:hover{color:var(--accent)}
+  .who .login{color:var(--text-3);font-weight:500;font-size:16px}
+  .bio{color:var(--text-2);font-size:14px;margin-top:1px}
+  .stats{display:flex;gap:22px;color:var(--text-3);font-size:13.5px}
+  .stats b{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums;margin-right:4px}
+  .rule{border:none;border-top:1px solid var(--border);margin:26px 0 0}
+
+  /* ===== toolbar ===== */
+  .toolbar{position:sticky;top:0;z-index:50;background:var(--bg);padding:16px 0 14px;border-bottom:1px solid var(--border);margin-bottom:18px}
+  .searchbox{position:relative;margin-bottom:12px}
+  .searchbox svg.mag{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
+  #q{
+    width:100%;height:42px;padding:0 84px 0 38px;font-size:14.5px;
+    background:var(--bg);border:1px solid var(--border);border-radius:10px;
+    color:var(--text);outline:none;transition:border-color .15s
+  }
+  #q:hover{border-color:var(--border-2)}
+  #q:focus{border-color:var(--text-3)}
+  #q::placeholder{color:var(--text-3)}
+  .kbd{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+  .kbd kbd{font-family:"JetBrains Mono",Consolas,monospace;font-size:11px;color:var(--text-3);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+  #clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:none;background:none;border:none;color:var(--text-3);font-size:16px;cursor:pointer;padding:2px 8px;border-radius:6px}
+  #clear:hover{color:var(--text);background:var(--bg-3)}
+  .searchbox.hasval #clear{display:block}
+  .searchbox.hasval .kbd{display:none}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .seg{display:flex;background:var(--bg-3);border-radius:9px;padding:2px;gap:1px}
+  .seg button{background:none;border:none;color:var(--text-2);padding:5px 13px;cursor:pointer;font-size:13px;font-weight:500;border-radius:7px;transition:color .15s,background .15s}
+  .seg button:hover{color:var(--text)}
+  .seg button.on{background:var(--invert-bg);color:var(--invert-fg)}
+  .seg button i,.chip i{font-style:normal;opacity:.55;font-size:12px}
+
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    background:var(--bg);border:1px solid var(--border);color:var(--text-2);border-radius:99px;
+    padding:4px 12px;font-size:12.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+    transition:border-color .15s,color .15s,background .15s
+  }
+  .chip:hover{border-color:var(--border-2);color:var(--text)}
+  .chip.on{background:var(--invert-bg);border-color:var(--invert-bg);color:var(--invert-fg)}
+  .chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+  /* custom dropdown */
+  .dd{position:relative;margin-left:auto}
+  .dd-btn{
+    display:inline-flex;align-items:center;gap:9px;height:34px;
+    background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--text-2);
+    padding:0 13px;font-size:13px;font-weight:500;cursor:pointer;transition:border-color .15s,color .15s
+  }
+  .dd-btn:hover{border-color:var(--border-2);color:var(--text)}
+  .dd-btn svg{flex-shrink:0;opacity:.6;transition:transform .18s}
+  .dd.open .dd-btn{border-color:var(--text-3);color:var(--text)}
+  .dd.open .dd-btn svg{transform:rotate(180deg)}
+  .dd-menu{
+    position:absolute;right:0;top:calc(100% + 6px);min-width:168px;z-index:100;
+    background:var(--bg-2);border:1px solid var(--border);border-radius:11px;padding:5px;
+    box-shadow:var(--shadow);opacity:0;transform:translateY(-4px);transform-origin:top right;
+    pointer-events:none;transition:opacity .14s,transform .14s
+  }
+  .dd.open .dd-menu{opacity:1;transform:none;pointer-events:auto}
+  .dd-menu button{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;
+    background:none;border:none;color:var(--text-2);padding:8px 11px;font-size:13px;font-weight:500;
+    border-radius:7px;cursor:pointer;text-align:left;transition:background .12s,color .12s
+  }
+  .dd-menu button:hover{background:var(--bg-3);color:var(--text)}
+  .dd-menu button.on{color:var(--text)}
+  .dd-menu button.on::after{content:"✓";font-weight:700;color:var(--text)}
+
+  .count{color:var(--text-3);font-size:13px;margin:0 2px 14px}
+  .count b{color:var(--text);font-weight:600}
+
+  /* ===== grid & cards ===== */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+  .card{
+    display:flex;flex-direction:column;gap:8px;
+    background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:18px;
+    transition:border-color .15s,background .15s;
+    animation:fade .3s ease both;
+  }
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .card:hover{border-color:var(--border-2);background:var(--bg-2)}
+  .card .top{display:flex;align-items:center;gap:8px}
+  .card .name{
+    font-family:"JetBrains Mono",Consolas,monospace;font-size:14.5px;font-weight:600;color:var(--text);
+    flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  }
+  .card:hover .name{color:var(--accent)}
+  .card .name mark{background:none;color:var(--accent)}
+  .card .desc{color:var(--text-2);font-size:13.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:43px}
+  .card .desc mark{background:none;color:var(--accent);font-weight:600}
+  .topics{display:flex;gap:6px;flex-wrap:wrap}
+  .topics .t{font-size:11px;color:var(--text-3);border:1px solid var(--border);border-radius:99px;padding:1px 9px}
+  .card .foot{display:flex;align-items:center;gap:13px;font-size:12.5px;color:var(--text-3);margin-top:auto;padding-top:10px;border-top:1px solid var(--border)}
+  .card .foot svg{vertical-align:-2px;margin-right:4px}
+  .lang{display:inline-flex;align-items:center;gap:6px;font-weight:500}
+  .lang i{width:9px;height:9px;border-radius:50%}
+  .badge{font-size:11px;font-weight:500;color:var(--text-3);border:1px solid var(--border);border-radius:6px;padding:1px 8px}
+  .badge.home{color:var(--text-2);cursor:pointer;transition:color .15s,border-color .15s}
+  .badge.home:hover{color:var(--text);border-color:var(--border-2)}
+
+  .empty{display:none;text-align:center;padding:90px 0;color:var(--text-3)}
+  .empty h2{font-size:17px;color:var(--text-2);margin-bottom:6px;font-weight:600}
+
+  footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);text-align:center;color:var(--text-3);font-size:12.5px}
+  footer a{color:var(--text-2)} footer a:hover{color:var(--text)}
+
+  .fab{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px;z-index:60}
+  .fab button{
+    width:38px;height:38px;border-radius:10px;border:1px solid var(--border);cursor:pointer;font-size:15px;
+    background:var(--bg);color:var(--text-2);transition:color .15s,border-color .15s,background .15s
+  }
+  .fab button:hover{color:var(--text);border-color:var(--border-2);background:var(--bg-2)}
+  #top{opacity:0;pointer-events:none}
+  #top.show{opacity:1;pointer-events:auto}
+
+  @media (max-width:640px){
+    .wrap{padding:28px 16px 60px}
+    .hero{gap:14px}
+    .avatar{width:52px;height:52px}
+    .stats{width:100%;gap:18px}
+    .dd{margin-left:0}
+    .who h1{font-size:19px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <img class="avatar" id="avatar" alt="avatar">
+    <div class="who">
+      <h1><a id="profile" target="_blank" rel="noopener"><span id="pname"></span></a><span class="login" id="login"></span></h1>
+      <div class="bio" id="bio"></div>
+    </div>
+    <div class="stats">
+      <span><b id="s-repos">0</b>仓库</span>
+      <span><b id="s-stars">0</b>Star</span>
+      <span><b id="s-followers">0</b>Followers</span>
+    </div>
+  </header>
+  <hr class="rule">
+
+  <div class="toolbar">
+    <div class="searchbox" id="sbox">
+      <svg class="mag" width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.526 1.286.75.75 0 0 1-.532-.221ZM11.5 7a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0Z"/></svg>
+      <input id="q" type="text" placeholder="搜索仓库名 / 描述 / 语言…（多关键词用空格分隔）" autocomplete="off">
+      <button id="clear" title="清空">×</button>
+      <span class="kbd"><kbd>/</kbd></span>
+    </div>
+    <div class="filters">
+      <div class="seg" id="type">
+        <button data-t="all" class="on">全部 <i id="n-all"></i></button>
+        <button data-t="own">原创 <i id="n-own"></i></button>
+        <button data-t="fork">Fork <i id="n-fork"></i></button>
+      </div>
+      <div class="chips" id="langs"></div>
+      <div class="dd" id="dd-sort">
+        <button class="dd-btn" id="dd-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span class="dd-label">排序：最近更新</span>
+          <svg width="9" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+        <div class="dd-menu" role="listbox" aria-label="排序方式">
+          <button role="option" data-v="updated" class="on" aria-selected="true">最近更新</button>
+          <button role="option" data-v="created" aria-selected="false">创建时间</button>
+          <button role="option" data-v="stars" aria-selected="false">Star 数</button>
+          <button role="option" data-v="name" aria-selected="false">名称 A-Z</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="count" id="count"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="empty" id="empty">
+    <h2>没有找到匹配的仓库</h2>
+    <p>换个关键词试试，或点击 × 清空搜索</p>
+  </div>
+
+  <footer>
+    数据抓取自 GitHub API · 快照生成于 <span id="gen"></span> · <a id="flink" target="_blank" rel="noopener">github.com/<span id="flogin"></span></a>
+  </footer>
+</div>
+
+<div class="fab">
+  <button id="top" title="回到顶部">↑</button>
+  <button id="theme" title="切换深浅色">🌙</button>
+</div>
+
+<script>
+const USER = {"login":"webzol","name":"Kit.","bio":"Don't pray for miracles. Practice endlessly.","avatar":"https://avatars.githubusercontent.com/u/34188495?v=4","html":"https://github.com/webzol","followers":13};
+const REPOS = [
+  {
+    "name": "history",
+    "url": "https://github.com/webzol/history",
+    "description": "历史人物事件",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-10-30",
+    "created": "2026-10-18",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "dong-skill",
+    "url": "https://github.com/webzol/dong-skill",
+    "description": "公众号排版",
+    "language": "HTML",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-10-30",
+    "created": "2026-09-08",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "grok",
+    "url": "https://github.com/webzol/grok",
+    "description": "助手",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-10-22",
+    "created": "2026-10-22",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "OmniRoute",
+    "url": "https://github.com/webzol/OmniRoute",
+    "description": "Never stop coding. Free MIT AI gateway: one endpoint, 290+ providers (90+ free), 500+ models — Kimi, Claude, GPT, OpenAI, Gemini, GLM, DeepSeek, MiniMax. Works with Claude Code, Codex, Cursor, OpenCode, Cline & Copilot. Quota-aware auto-fallback, RTK+Caveman compression saves 15-95% tokens, MCP/A2A, Desktop/PWA. Built by 500+ contributors",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-10-21",
+    "created": "2026-08-05",
+    "homepage": "https://omniroute.online",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "Image-Compress",
+    "url": "https://github.com/webzol/Image-Compress",
+    "description": "浏览器压缩裁剪插件，自动识别，电商必备。",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-21",
+    "created": "2026-07-29",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "StepSkill",
+    "url": "https://github.com/webzol/StepSkill",
+    "description": "Step画图skill",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-20",
+    "created": "2026-09-20",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "Musicpro",
+    "url": "https://github.com/webzol/Musicpro",
+    "description": "音乐",
+    "language": "Dart",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-19",
+    "created": "2026-09-19",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "PasswordS",
+    "url": "https://github.com/webzol/PasswordS",
+    "description": "密码管理",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-18",
+    "created": "2026-09-18",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "Agnespro",
+    "url": "https://github.com/webzol/Agnespro",
+    "description": "短视频工作流",
+    "language": "Go",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-16",
+    "created": "2026-09-16",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "agnesai",
+    "url": "https://github.com/webzol/agnesai",
+    "description": "短视频工作流",
+    "language": "Go",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-16",
+    "created": "2026-09-14",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "LandPPT",
+    "url": "https://github.com/webzol/LandPPT",
+    "description": "一个基于LLM的演示文稿生成平台，能够自动将文档内容转换为专业的PPT演示文稿。平台支持多种AI模型，提供丰富的模板和样式选择，让用户能够创建高质量的演示文稿。",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-14",
+    "created": "2026-09-14",
+    "homepage": "https://landppt.com",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "bodian-music",
+    "url": "https://github.com/webzol/bodian-music",
+    "description": "一款基于 Flutter 的 Android 音乐播放器，仿 lx-music-mobile 风格。",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-11",
+    "created": "2026-09-11",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "Mini-tarot-game",
+    "url": "https://github.com/webzol/Mini-tarot-game",
+    "description": "塔罗牌的小游戏英文",
+    "language": "HTML",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-11",
+    "created": "2026-09-11",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "WXSKill",
+    "url": "https://github.com/webzol/WXSKill",
+    "description": "微信公众号skill，你的排版交给我。",
+    "language": "HTML",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-08",
+    "created": "2026-09-02",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "cc-switchS",
+    "url": "https://github.com/webzol/cc-switchS",
+    "description": "A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenClaw, Grok Build & Hermes Agent. Only official website: ccswitch.io",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-09-03",
+    "created": "2026-09-03",
+    "homepage": "https://ccswitch.io",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "sub2api",
+    "url": "https://github.com/webzol/sub2api",
+    "description": "Sub2API 一站式开源中转服务，让 Claude、Openai 、Gemini、Grok订阅统一接入，支持拼车共享，更高效分摊成本，原生工具无缝使用。",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-26",
+    "created": "2026-08-26",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "LPMQ",
+    "url": "https://github.com/webzol/LPMQ",
+    "description": "AI模型使用",
+    "language": "Python",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-24",
+    "created": "2026-08-19",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "skill",
+    "url": "https://github.com/webzol/skill",
+    "description": "你的skill网站",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-18",
+    "created": "2026-08-18",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "DONG",
+    "url": "https://github.com/webzol/DONG",
+    "description": "OneDong 主题，删繁去冗，以极简线条、留白美学重构视觉秩序，克制设计、聚焦内容，用最少元素，呈现最高级的表达。",
+    "language": "PHP",
+    "topics": [],
+    "stars": 1,
+    "forks": 0,
+    "updated": "2026-08-13",
+    "created": "2026-07-14",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "homepage",
+    "url": "https://github.com/webzol/homepage",
+    "description": "我的个人主页，homepage,个人引导页,简约主页,个人导航",
+    "language": "CSS",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-13",
+    "created": "2026-08-10",
+    "homepage": "https://zyyo.cc",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "heyll",
+    "url": "https://github.com/webzol/heyll",
+    "description": "一个有趣的个人主页",
+    "language": "CSS",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-13",
+    "created": "2026-08-10",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "MoeHome",
+    "url": "https://github.com/webzol/MoeHome",
+    "description": "✨ 为技术爱好者打造的一款简约、酷炫的个人主页模版。定位个人品牌的中心化入口，一张精心设计的数字名片。",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-10",
+    "created": "2026-08-10",
+    "homepage": "https://www.moewah.com",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "grok-register-panel",
+    "url": "https://github.com/webzol/grok-register-panel",
+    "description": "Grok register engine (Camoufox) + live web monitor panel",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-04",
+    "created": "2026-08-04",
+    "homepage": "https://linux.do",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "cloudflare_temp_email",
+    "url": "https://github.com/webzol/cloudflare_temp_email",
+    "description": "CloudFlare free temp domain email 免费收发 临时域名邮箱 支持附件 IMAP SMTP TelegramBot",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-08-04",
+    "created": "2026-08-04",
+    "homepage": "https://mail.awsl.uk",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "KBLINK",
+    "url": "https://github.com/webzol/KBLINK",
+    "description": "即知识库，是归集整理各类知识内容、可供查阅调用的信息资料库。",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-07-28",
+    "created": "2026-07-28",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "INQLINK",
+    "url": "https://github.com/webzol/INQLINK",
+    "description": "快递单号查询",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-07-28",
+    "created": "2026-07-27",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "Codex-Dream-Skin",
+    "url": "https://github.com/webzol/Codex-Dream-Skin",
+    "description": "Codex Collection",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-07-16",
+    "created": "2026-07-16",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "INS",
+    "url": "https://github.com/webzol/INS",
+    "description": "a",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-07-16",
+    "created": "2026-07-16",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "dongS",
+    "url": "https://github.com/webzol/dongS",
+    "description": "A Typora theme based on fuwari. 一款受 Fuwari 启发的 Typora 主题。",
+    "language": "PHP",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-07-14",
+    "created": "2026-06-26",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "cxcat",
+    "url": "https://github.com/webzol/cxcat",
+    "description": "wordpress开源小程序 version1免费小程序多端小程序",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 139,
+    "forks": 43,
+    "updated": "2026-07-06",
+    "created": "2018-07-19",
+    "homepage": "https://mzhuti.com",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "FOSS",
+    "url": "https://github.com/webzol/FOSS",
+    "description": "自由及开源软件",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-06-25",
+    "created": "2026-06-25",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "hot_news",
+    "url": "https://github.com/webzol/hot_news",
+    "description": "热点速览，每日热点新闻 API 提供来自多个平台的实时热点新闻数据。数据大约每半小时自动刷新一次。此 API 可用于检索热点新闻标题及其 URL 和评分。",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-06-25",
+    "created": "2026-06-25",
+    "homepage": "https://news.orz.ai",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "TrendRadarS",
+    "url": "https://github.com/webzol/TrendRadarS",
+    "description": "一键监控今日头条、百度热搜、微博、抖音、知乎、B站等35个平台，智能关键词筛选，自动生成热点分析报告。支持企业微信、飞书、钉钉、Telegram推送，30秒网页部署，1分钟手机通知，无需编程基础。还有文字和图片版api可调用",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-06-25",
+    "created": "2026-06-25",
+    "homepage": "https://news.fengpt.eu.org",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "webzol",
+    "url": "https://github.com/webzol/webzol",
+    "description": "webzol",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-05-21",
+    "created": "2026-05-13",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "Gold",
+    "url": "https://github.com/webzol/Gold",
+    "description": "实时金价查询",
+    "language": "Vue",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-05-12",
+    "created": "2026-05-12",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "ai-video-script-generator",
+    "url": "https://github.com/webzol/ai-video-script-generator",
+    "description": "",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2026-03-24",
+    "created": "2026-03-24",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "openclaw",
+    "url": "https://github.com/webzol/openclaw",
+    "description": "Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 ",
+    "language": "TypeScript",
+    "topics": [],
+    "stars": 1,
+    "forks": 0,
+    "updated": "2026-03-24",
+    "created": "2026-03-24",
+    "homepage": "https://openclaw.ai",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "Travel-Mini-Program",
+    "url": "https://github.com/webzol/Travel-Mini-Program",
+    "description": "基于 WordPress Mini Program API 插件创建的 WordPress 小程序之 Travel 主题，包括微信小程序及 QQ 小程序。",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 11,
+    "forks": 3,
+    "updated": "2023-08-28",
+    "created": "2019-07-26",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "Dress",
+    "url": "https://github.com/webzol/Dress",
+    "description": "嗯  这就是一个有趣的XXXXX         好耶  是女装",
+    "language": "Ruby",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2023-02-25",
+    "created": "2019-01-28",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "mui",
+    "url": "https://github.com/webzol/mui",
+    "description": "最接近原生APP体验的高性能框架",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-08-05",
+    "created": "2019-08-05",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "Terminal",
+    "url": "https://github.com/webzol/Terminal",
+    "description": "The new Windows Terminal, and the original Windows console host -- all in the same place!",
+    "language": "C++",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-05-08",
+    "created": "2019-05-08",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "blog",
+    "url": "https://github.com/webzol/blog",
+    "description": "博客相关的代码及demo",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-04-03",
+    "created": "2019-04-03",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "996.ICU",
+    "url": "https://github.com/webzol/996.ICU",
+    "description": "Repo for counting stars and contributing. Press F to pay respect to glorious developers.",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-03-28",
+    "created": "2019-03-28",
+    "homepage": "https://996.icu",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "taro",
+    "url": "https://github.com/webzol/taro",
+    "description": "多端统一开发框架，支持用 React 的开发方式编写一次代码，生成能运行在微信/百度/支付宝/字节跳动小程序、H5、React Native 等的应用。  https://taro.js.org/",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-03-22",
+    "created": "2019-03-22",
+    "homepage": "https://nervjs.github.io/taro/",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "webzol.github.io",
+    "url": "https://github.com/webzol/webzol.github.io",
+    "description": "Hello 前端中关村 ",
+    "language": "HTML",
+    "topics": [],
+    "stars": 1,
+    "forks": 0,
+    "updated": "2019-03-20",
+    "created": "2017-12-02",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "cxcatapi",
+    "url": "https://github.com/webzol/cxcatapi",
+    "description": "用于一些特殊的处理",
+    "language": "PHP",
+    "topics": [],
+    "stars": 4,
+    "forks": 2,
+    "updated": "2019-03-18",
+    "created": "2018-08-24",
+    "homepage": "",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "music",
+    "url": "https://github.com/webzol/music",
+    "description": "音乐搜索器 - 多站合一音乐搜索解决方案",
+    "language": "PHP",
+    "topics": [],
+    "stars": 1,
+    "forks": 0,
+    "updated": "2019-03-18",
+    "created": "2019-03-18",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "ycy",
+    "url": "https://github.com/webzol/ycy",
+    "description": "\"Hello YCY\" Programming Competition",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-03-12",
+    "created": "2019-03-12",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "programmer-job-blacklist",
+    "url": "https://github.com/webzol/programmer-job-blacklist",
+    "description": ":see_no_evil:程序员找工作黑名单，换工作和当技术合伙人需谨慎啊 更新有赞",
+    "language": "Shell",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-03-04",
+    "created": "2019-03-04",
+    "homepage": "http://coder.shengxinjing.cn/",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "awesome-wechat-weapp",
+    "url": "https://github.com/webzol/awesome-wechat-weapp",
+    "description": "微信小程序开发资源汇总 :100:",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-02-28",
+    "created": "2019-02-28",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "weapp-one",
+    "url": "https://github.com/webzol/weapp-one",
+    "description": "ONE·一个|图文 微信小程序/开源代码",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-02-26",
+    "created": "2019-02-26",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "github-slideshow",
+    "url": "https://github.com/webzol/github-slideshow",
+    "description": "A robot powered training repository :robot:",
+    "language": "HTML",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-01-29",
+    "created": "2019-01-29",
+    "homepage": "https://lab.github.com/githubtraining/introduction-to-github",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "WordPress-One-MinAPP",
+    "url": "https://github.com/webzol/WordPress-One-MinAPP",
+    "description": "WordPress 后台 + 仿 One 微信小程序",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-01-17",
+    "created": "2019-01-15",
+    "homepage": "https://github.com/safe-dog/one",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "DPED",
+    "url": "https://github.com/webzol/DPED",
+    "description": "Software and pre-trained models for automatic photo quality enhancement using Deep Convolutional Networks",
+    "language": "Python",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-01-08",
+    "created": "2019-01-08",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "LeetCodeAnimation",
+    "url": "https://github.com/webzol/LeetCodeAnimation",
+    "description": "Demonstrate all the questions on LeetCode in the form of animation.（用动画的形式呈现解LeetCode题目的思路）",
+    "language": "C++",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2019-01-08",
+    "created": "2019-01-08",
+    "homepage": "http://www.aihack.cn",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "codestar-framework",
+    "url": "https://github.com/webzol/codestar-framework",
+    "description": "A Simple and Lightweight WordPress Option Framework",
+    "language": "",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2018-12-26",
+    "created": "2018-12-26",
+    "homepage": "http://codestarframework.com/",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "url": "https://github.com/webzol/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "description": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "language": "Python",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2018-12-15",
+    "created": "2018-12-15",
+    "homepage": "http://e.ee",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "cxcatEd",
+    "url": "https://github.com/webzol/cxcatEd",
+    "description": "wordpress开源小程序 猫小镇Simplified version2",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 1,
+    "updated": "2018-12-14",
+    "created": "2018-12-14",
+    "homepage": "http://www.aihack.cn",
+    "fork": false,
+    "archived": false
+  },
+  {
+    "name": "rest-api-to-miniprogram",
+    "url": "https://github.com/webzol/rest-api-to-miniprogram",
+    "description": "REST API TO MiniProgram 为小程序提供 rest api 支持",
+    "language": "PHP",
+    "topics": [],
+    "stars": 1,
+    "forks": 0,
+    "updated": "2018-12-04",
+    "created": "2018-12-03",
+    "homepage": "",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "winxin-app-watch-life.net",
+    "url": "https://github.com/webzol/winxin-app-watch-life.net",
+    "description": "WordPress版微信小程序",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2018-05-29",
+    "created": "2018-05-29",
+    "homepage": "https://www.watch-life.net",
+    "fork": true,
+    "archived": false
+  },
+  {
+    "name": "we-cropper",
+    "url": "https://github.com/webzol/we-cropper",
+    "description": "🐹微信小程序图片裁剪工具",
+    "language": "JavaScript",
+    "topics": [],
+    "stars": 0,
+    "forks": 0,
+    "updated": "2018-05-25",
+    "created": "2018-05-25",
+    "homepage": "https://we-plugin.github.io/we-cropper/#/",
+    "fork": true,
+    "archived": false
+  }
+];
+const GEN_DATE = "2026-10-31";
+
+const LANG_COLORS = {
+  "JavaScript":"#f1e05a","HTML":"#e34c26","CSS":"#563d7c","Python":"#3572A5","PHP":"#4F5D95",
+  "Go":"#00ADD8","Dart":"#00B4AB","Vue":"#41b883","TypeScript":"#3178c6","Ruby":"#701516",
+  "C++":"#f34b7d","Shell":"#89e051","C":"#555555","Java":"#b07219","Rust":"#dea584","Kotlin":"#A97BFF"
+};
+
+/* ---------- theme ---------- */
+const themeBtn = document.getElementById('theme');
+function applyTheme(t){document.documentElement.dataset.theme=t;themeBtn.textContent=t==='dark'?'🌙':'☀️';localStorage.setItem('ghshow-theme',t);}
+applyTheme(localStorage.getItem('ghshow-theme')||'dark');
+themeBtn.onclick=()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+
+/* ---------- header ---------- */
+document.getElementById('avatar').src = USER.avatar;
+document.getElementById('pname').textContent = USER.name || USER.login;
+document.getElementById('profile').href = USER.html;
+document.getElementById('login').textContent = '@' + USER.login;
+document.getElementById('bio').textContent = USER.bio || '';
+document.getElementById('gen').textContent = GEN_DATE;
+document.getElementById('flogin').textContent = USER.login;
+document.getElementById('flink').href = USER.html;
+
+function countUp(el,to){
+  const t0=performance.now(), dur=800;
+  (function tick(t){
+    const p=Math.min((t-t0)/dur,1), e=1-Math.pow(1-p,3);
+    el.textContent=Math.round(to*e);
+    if(p<1)requestAnimationFrame(tick);
+  })(t0);
+}
+countUp(document.getElementById('s-repos'),REPOS.length);
+countUp(document.getElementById('s-stars'),REPOS.reduce((a,r)=>a+r.stars,0));
+countUp(document.getElementById('s-followers'),USER.followers);
+
+/* ---------- state ---------- */
+let state = { q:'', type:'all', lang:'', sort:'updated' };
+let firstRender = true;
+
+/* ---------- language chips ---------- */
+const langCounts = {};
+REPOS.forEach(r=>{ if(r.language) langCounts[r.language]=(langCounts[r.language]||0)+1; });
+const langs = Object.keys(langCounts).sort((a,b)=>langCounts[b]-langCounts[a]);
+const langBox = document.getElementById('langs');
+langs.forEach(l=>{
+  const b=document.createElement('button');
+  b.className='chip'; b.dataset.lang=l;
+  b.innerHTML=`<i class="dot" style="background:${LANG_COLORS[l]||'#999'}"></i>${l}<i>${langCounts[l]}</i>`;
+  b.onclick=()=>{ state.lang = state.lang===l?'':l; syncChips(); render(); };
+  langBox.appendChild(b);
+});
+function syncChips(){ [...langBox.children].forEach(c=>c.classList.toggle('on',c.dataset.lang===state.lang)); }
+document.getElementById('n-all').textContent=REPOS.length;
+document.getElementById('n-own').textContent=REPOS.filter(r=>!r.fork).length;
+document.getElementById('n-fork').textContent=REPOS.filter(r=>r.fork).length;
+
+/* ---------- controls ---------- */
+const qInput=document.getElementById('q'), sbox=document.getElementById('sbox');
+let debounce=null;
+qInput.addEventListener('input',()=>{
+  sbox.classList.toggle('hasval',!!qInput.value);
+  clearTimeout(debounce);
+  debounce=setTimeout(()=>{ state.q=qInput.value; render(); },110);
+});
+document.getElementById('clear').onclick=()=>{ clearTimeout(debounce); qInput.value=''; state.q=''; sbox.classList.remove('hasval'); render(); qInput.focus(); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='/' && document.activeElement!==qInput){ e.preventDefault(); qInput.focus(); }
+  if(e.key==='Escape' && document.activeElement===qInput){ document.getElementById('clear').click(); }
+});
+document.getElementById('type').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  state.type=b.dataset.t;
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));
+  render();
+});
+
+/* custom sort dropdown */
+const dd=document.getElementById('dd-sort'), ddBtn=document.getElementById('dd-btn'), ddMenu=dd.querySelector('.dd-menu');
+const SORT_LABEL={updated:'最近更新',created:'创建时间',stars:'Star 数',name:'名称 A-Z'};
+function openDD(){dd.classList.add('open');ddBtn.setAttribute('aria-expanded','true');}
+function closeDD(){dd.classList.remove('open');ddBtn.setAttribute('aria-expanded','false');}
+function ddSet(v){
+  state.sort=v;
+  ddBtn.querySelector('.dd-label').textContent='排序：'+SORT_LABEL[v];
+  [...ddMenu.querySelectorAll('button')].forEach(o=>{
+    const on=o.dataset.v===v; o.classList.toggle('on',on); o.setAttribute('aria-selected',on);
+  });
+  closeDD(); render();
+}
+ddBtn.addEventListener('click',e=>{ e.stopPropagation(); dd.classList.contains('open')?closeDD():openDD(); });
+ddMenu.querySelectorAll('button').forEach(o=>o.addEventListener('click',()=>ddSet(o.dataset.v)));
+document.addEventListener('click',e=>{ if(!dd.contains(e.target)) closeDD(); });
+document.addEventListener('keydown',e=>{
+  if(!dd.classList.contains('open'))return;
+  const opts=[...ddMenu.querySelectorAll('button')];
+  const cur=opts.indexOf(document.activeElement);
+  if(e.key==='Escape'){ closeDD(); ddBtn.focus(); }
+  else if(e.key==='ArrowDown'){ e.preventDefault(); opts[Math.min(cur+1,opts.length-1)].focus(); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); opts[Math.max(cur-1,0)].focus(); }
+});
+
+/* back to top */
+const topBtn=document.getElementById('top');
+addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>500),{passive:true});
+topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+/* ---------- filtering ---------- */
+function matches(r,terms){
+  const hay=(r.name+' '+r.description+' '+r.language).toLowerCase();
+  return terms.every(t=>hay.includes(t));
+}
+function relTime(d){
+  const days=Math.floor((Date.now()-new Date(d).getTime())/86400000);
+  if(days<=0)return '今天'; if(days===1)return '昨天';
+  if(days<30)return days+' 天前';
+  if(days<365)return Math.floor(days/30)+' 个月前';
+  const y=Math.floor(days/365); return y+' 年前'+(Math.floor(days%365/30)>0?Math.floor(days%365/30)+' 个月':'');
+}
+
+const grid=document.getElementById('grid'), countEl=document.getElementById('count'), emptyEl=document.getElementById('empty');
+const ICON={star:'<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>',
+fork:'<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/></svg>',
+home:'<svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4a.75.75 0 0 1 .75.75v4a.75.75 0 0 1-1.5 0V3.56L9.28 8.78a.749.749 0 1 1-1.06-1.06L13.44 3.5H10.604a.75.75 0 0 1 0-1.5Z"/></svg>'};
+
+function setMark(el,text,terms){
+  if(!terms.length){ el.textContent=text; return; }
+  el.textContent='';
+  const lower=text.toLowerCase(); let i=0;
+  while(i<text.length){
+    let bestLen=0;
+    for(const t of terms){ const p=lower.indexOf(t,i); if(p===i&&t.length>bestLen){bestLen=t.length;} }
+    if(bestLen===0){
+      let next=Infinity;
+      for(const t of terms){ const p=lower.indexOf(t,i); if(p>=0&&p<next)next=p; }
+      if(next===Infinity){ el.appendChild(document.createTextNode(text.slice(i))); break; }
+      el.appendChild(document.createTextNode(text.slice(i,next))); i=next;
+    }else{
+      const m=document.createElement('mark'); m.textContent=text.substr(i,bestLen); el.appendChild(m); i+=bestLen;
+    }
+  }
+}
+
+function render(){
+  const terms=state.q.toLowerCase().split(/\s+/).filter(Boolean);
+  let list=REPOS.filter(r=>
+    (state.type==='all'||(state.type==='own'&&!r.fork)||(state.type==='fork'&&r.fork)) &&
+    (!state.lang||r.language===state.lang) &&
+    matches(r,terms)
+  );
+  const cmp={
+    updated:(a,b)=>b.updated.localeCompare(a.updated),
+    created:(a,b)=>b.created.localeCompare(a.created),
+    stars:(a,b)=>b.stars-a.stars||b.updated.localeCompare(a.updated),
+    name:(a,b)=>a.name.localeCompare(b.name)
+  }[state.sort];
+  list=[...list].sort(cmp);
+
+  countEl.innerHTML=`共 <b>${REPOS.length}</b> 个仓库 · 当前显示 <b>${list.length}</b> 个`;
+  emptyEl.style.display=list.length?'none':'block';
+  grid.innerHTML='';
+
+  list.forEach((r,i)=>{
+    const a=document.createElement('a');
+    a.className='card'; a.href=r.url; a.target='_blank'; a.rel='noopener';
+    if(firstRender){ a.style.animationDelay=Math.min(i*22,350)+'ms'; }
+    else{ a.style.animation='none'; }
+    const top=document.createElement('div'); top.className='top';
+    const name=document.createElement('span'); name.className='name'; setMark(name,r.name,terms);
+    top.appendChild(name);
+    if(r.fork){ const f=document.createElement('span'); f.className='badge'; f.textContent='Fork'; top.appendChild(f); }
+    if(r.homepage){ const h=document.createElement('a'); h.className='badge home'; h.innerHTML=ICON.home+'站点'; h.href=r.homepage; h.target='_blank'; h.rel='noopener'; h.onclick=e=>e.stopPropagation(); top.appendChild(h); }
+    a.appendChild(top);
+
+    if(r.description){ const d=document.createElement('div'); d.className='desc'; setMark(d,r.description,terms); a.appendChild(d); }
+
+    if(r.topics&&r.topics.length){ const tp=document.createElement('div'); tp.className='topics'; r.topics.slice(0,6).forEach(t=>{const s=document.createElement('span');s.className='t';s.textContent=t;tp.appendChild(s);}); a.appendChild(tp); }
+
+    const foot=document.createElement('div'); foot.className='foot';
+    if(r.language){ foot.innerHTML+=`<span class="lang"><i style="background:${LANG_COLORS[r.language]||'#999'}"></i>${r.language}</span>`; }
+    foot.innerHTML+=`<span>${ICON.star}${r.stars}</span><span>${ICON.fork}${r.forks}</span><span style="margin-left:auto">更新于 ${relTime(r.updated)}</span>`;
+    a.appendChild(foot);
+    grid.appendChild(a);
+  });
+  firstRender=false;
+}
+render();
+</script>
+</body>
+</html>
